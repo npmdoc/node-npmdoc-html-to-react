@@ -94,18 +94,6 @@
 
         </li>
 
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">html-to-react.</span>should_process_node_definitions</span>
-
-        </li>
-
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">html-to-react.</span>utils</span>
-
-        </li>
-
     </ol></li>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.html-to-react.IsValidNodeDefinitions">module html-to-react.IsValidNodeDefinitions</a><ol>
@@ -115,32 +103,6 @@
             <a class="apidocElementLiA" href="#apidoc.element.html-to-react.IsValidNodeDefinitions.alwaysValid">
             function <span class="apidocSignatureSpan">html-to-react.IsValidNodeDefinitions.</span>alwaysValid
             <span class="apidocSignatureSpan">()</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.html-to-react.should_process_node_definitions">module html-to-react.should_process_node_definitions</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.html-to-react.should_process_node_definitions.shouldProcessEveryNode">
-            function <span class="apidocSignatureSpan">html-to-react.should_process_node_definitions.</span>shouldProcessEveryNode
-            <span class="apidocSignatureSpan">(node)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.html-to-react.utils">module html-to-react.utils</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.html-to-react.utils.createElement">
-            function <span class="apidocSignatureSpan">html-to-react.utils.</span>createElement
-            <span class="apidocSignatureSpan">(node, index, data, children)</span>
             </a>
 
         </li>
@@ -217,7 +179,23 @@
     parseWithInstructions: parseWithInstructions,
   };
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+var ProcessingInstructions = require(&#x27;./processing-instructions&#x27;);
+var IsValidNodeDefinitions = require(&#x27;./is-valid-node-definitions&#x27;);
+var utils = require(&#x27;./utils&#x27;);
+
+function Html2ReactParser(options) {
+function parseHtmlToTree(html) {
+  var handler = new htmlParser.DomHandler();
+  var parser = new htmlParser.<span class="apidocCodeKeywordSpan">Parser</span>(handler, options);
+  parser.parseComplete(html);
+  return handler.dom;
+};
+
+function traverseDom(node, isValidNode, processingInstructions, index) {
+  if (isValidNode(node)) {
+    var processingInstruction = find(function (processingInstruction) {
+...</pre></li>
     </ul>
 
 
@@ -296,10 +274,6 @@ var processingInstructions = [
 
 
 
-
-
-
-
 </div>
 
 <div class="apidocSectionDiv">
@@ -317,87 +291,6 @@ var processingInstructions = [
   return true;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.html-to-react.should_process_node_definitions" id="apidoc.module.html-to-react.should_process_node_definitions">module html-to-react.should_process_node_definitions</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.html-to-react.should_process_node_definitions.shouldProcessEveryNode" id="apidoc.element.html-to-react.should_process_node_definitions.shouldProcessEveryNode">
-        function <span class="apidocSignatureSpan">html-to-react.should_process_node_definitions.</span>shouldProcessEveryNode
-        <span class="apidocSignatureSpan">(node)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function shouldProcessEveryNode(node) {
-  return true;
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.html-to-react.utils" id="apidoc.module.html-to-react.utils">module html-to-react.utils</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.html-to-react.utils.createElement" id="apidoc.element.html-to-react.utils.createElement">
-        function <span class="apidocSignatureSpan">html-to-react.utils.</span>createElement
-        <span class="apidocSignatureSpan">(node, index, data, children)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function createElement(node, index, data, children) {
-  var elementProps = {
-    key: index,
-  };
-  if (node.attribs) {
-    elementProps = reduce(function(result, keyAndValue) {
-      var key = keyAndValue[0];
-      var value = keyAndValue[1];
-      key = camelCaseAttrMap[key.replace(/[-:]/, &#x27;&#x27;)] || key;
-      if (key === &#x27;style&#x27;) {
-        value = createStyleJsonFromString(value);
-      } else if (key === &#x27;class&#x27;) {
-        key = &#x27;className&#x27;;
-      }
-      if (typeof value === &#x27;string&#x27;) {
-        value = value;
-      }
-      result[key] = value || key;
-      return result;
-    }, elementProps, toPairs(node.attribs));
-  }
-
-  children = children || [];
-  var allChildren = data != null ? [data,].concat(children) : children;
-  return React.createElement.apply(
-    null, [node.name, elementProps,].concat(allChildren)
-  );
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-   // that we want to insert our React
-   // component as a child
-   replaceChildren: true,
-   shouldProcessNode: function (node) {
-        return node.attribs &#x26;&#x26; node.attribs[&#x27;data-test&#x27;] === &#x27;foo&#x27;;
-    },
-    processNode: function (node, children, index) {
-        return React.<span class="apidocCodeKeywordSpan">createElement</span>(&#x27;h1&#x27;, {key: index,}, &#x27;Heading&#x27;);
-    }
-},
-{
-    // Anything else
-    shouldProcessNode: function (node) {
-        return true;
-    },
-...</pre></li>
     </ul>
 
 
